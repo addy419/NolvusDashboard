@@ -168,21 +168,8 @@ namespace Vcc.Nolvus.Dashboard.Frames.Installer
             }
 
             DrpDwnLstAntiAliasing.DataSource = AntiAliasing;
-
-            if (!ServiceSingleton.Settings.ForceAA)
-            {
-                LblGPUs.Text = string.Join(Environment.NewLine, ServiceSingleton.Globals.GetVideoAdapters().ToArray());
-
-                if (!IsNvidiaRTX())
-                {
-                    ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = "TAA";
-                    DrpDwnLstAntiAliasing.Enabled = false;
-                }
-            }
-            else
-            {
-                LblGPUs.Text = "NOT LISTED (CHECK BYPASSED)";
-            }
+      
+            LblGPUs.Text = "NOT LISTED (CHECK BYPASSED)";
             
             DrpDwnLstAntiAliasing.SelectedIndex = AntiAliasingIndex(AntiAliasing);
 

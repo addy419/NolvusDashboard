@@ -12,7 +12,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Vcc.Nolvus.Browser</RootNamespace>
     <AssemblyName>Vcc.Nolvus.Browser</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -50,10 +50,57 @@
       <HintPath>..\packages\CefSharp.WinForms.115.3.110\lib\net462\CefSharp.WinForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Syncfusion.Core.WinForms, Version=20.2460.0.36, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
-    <Reference Include="Syncfusion.Shared.Base, Version=20.2460.0.36, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
-    <Reference Include="Syncfusion.Tools.Base, Version=20.2460.0.36, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
-    <Reference Include="Syncfusion.Tools.Windows, Version=20.2460.0.36, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
+    <Reference Include="Syncfusion.Core.WinForms, Version=20.2460.0.36, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Core.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Data.WinForms">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Data.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DataSource.WinForms">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.DataSource.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Grid.Base">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Grid.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Grid.Windows">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Grid.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.GridCommon.WinForms">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.GridCommon.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Office2016Theme.WinForms">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Office2016Theme.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Office2019Theme.WinForms">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Office2019Theme.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfDataGrid.WinForms">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.SfDataGrid.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfInput.WinForms">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.SfInput.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SfListView.WinForms">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.SfListView.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Shared.Base, Version=20.2460.0.36, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Shared.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Shared.Windows">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Shared.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SpellChecker.Base">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.SpellChecker.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Tools.Base, Version=20.2460.0.36, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Tools.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Tools.Windows, Version=20.2460.0.36, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\Nolvus\Syncfusion.Tools.Windows.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -101,6 +148,57 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Resources\cog-loader-alpha.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Core.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Data.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.DataSource.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Grid.Base.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Grid.Windows.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.GridCommon.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Licensing.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Office2016Theme.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Office2019Theme.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.SfDataGrid.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.SfInput.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.SfListView.WinForms.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Shared.Base.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Shared.Windows.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.SpellChecker.Base.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Tools.Base.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Syncfusion.Tools.Windows.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

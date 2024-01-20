@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Vcc.Nolvus.Updater</RootNamespace>
     <AssemblyName>NolvusUpdater</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -124,6 +124,23 @@
   <ItemGroup>
     <Content Include="ILMergeOrder.txt" />
     <Content Include="nolvus-ico.ico" />
+    <None Include="Resources\Syncfusion.Tools.Windows.dll" />
+    <None Include="Resources\Syncfusion.Tools.Base.dll" />
+    <None Include="Resources\Syncfusion.SpellChecker.Base.dll" />
+    <None Include="Resources\Syncfusion.Shared.Windows.dll" />
+    <None Include="Resources\Syncfusion.Shared.Base.dll" />
+    <None Include="Resources\Syncfusion.SfListView.WinForms.dll" />
+    <None Include="Resources\Syncfusion.SfInput.WinForms.dll" />
+    <None Include="Resources\Syncfusion.SfDataGrid.WinForms.dll" />
+    <None Include="Resources\Syncfusion.Office2019Theme.WinForms.dll" />
+    <None Include="Resources\Syncfusion.Office2016Theme.WinForms.dll" />
+    <None Include="Resources\Syncfusion.Licensing.dll" />
+    <None Include="Resources\Syncfusion.GridCommon.WinForms.dll" />
+    <None Include="Resources\Syncfusion.Grid.Windows.dll" />
+    <None Include="Resources\Syncfusion.Grid.Base.dll" />
+    <None Include="Resources\Syncfusion.DataSource.WinForms.dll" />
+    <None Include="Resources\Syncfusion.Data.WinForms.dll" />
+    <None Include="Resources\Syncfusion.Core.WinForms.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

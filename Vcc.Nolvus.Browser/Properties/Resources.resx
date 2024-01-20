@@ -121,4 +121,55 @@
   <data name="cog-loader-alpha" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cog-loader-alpha.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Syncfusion_Core_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Core.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_DataSource_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.DataSource.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Data_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Data.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_GridCommon_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.GridCommon.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Grid_Base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Grid.Base.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Grid_Windows" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Grid.Windows.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Licensing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Licensing.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Office2016Theme_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Office2016Theme.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Office2019Theme_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Office2019Theme.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_SfDataGrid_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.SfDataGrid.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_SfInput_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.SfInput.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_SfListView_WinForms" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.SfListView.WinForms.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Shared_Base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Shared.Base.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Shared_Windows" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Shared.Windows.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_SpellChecker_Base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.SpellChecker.Base.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Tools_Base" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Tools.Base.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Syncfusion_Tools_Windows" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Syncfusion.Tools.Windows.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

@@ -19,7 +19,7 @@ namespace Vcc.Nolvus.Updater.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,6 +57,176 @@ namespace Vcc.Nolvus.Updater.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Core_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Core_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Data_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Data_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_DataSource_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_DataSource_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Grid_Base {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Grid_Base", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Grid_Windows {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Grid_Windows", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_GridCommon_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_GridCommon_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Licensing {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Licensing", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Office2016Theme_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Office2016Theme_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Office2019Theme_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Office2019Theme_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_SfDataGrid_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_SfDataGrid_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_SfInput_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_SfInput_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_SfListView_WinForms {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_SfListView_WinForms", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Shared_Base {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Shared_Base", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Shared_Windows {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Shared_Windows", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_SpellChecker_Base {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_SpellChecker_Base", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Tools_Base {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Tools_Base", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Syncfusion_Tools_Windows {
+            get {
+                object obj = ResourceManager.GetObject("Syncfusion_Tools_Windows", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }
