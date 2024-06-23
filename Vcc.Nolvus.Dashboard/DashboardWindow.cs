@@ -27,7 +27,8 @@ namespace Vcc.Nolvus.Dashboard
         private TitleBarControl TitleBarControl;
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
-        
+        private PictureBox PicBox;
+
         [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
@@ -105,9 +106,50 @@ namespace Vcc.Nolvus.Dashboard
             }
         }
 
+        private string DashboardExe
+        {
+            get
+            {
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashboard.exe");
+            }            
+        }
+
         #endregion
 
         #region UI Methods
+
+        private void ShowLoadingIndicator()
+        {
+            if (InvokeRequired)
+            {
+                Invoke((System.Action)ShowLoadingIndicator);
+                return;
+            }
+
+            PicBox = new PictureBox();
+            PicBox.Image = Properties.Resources.cog_loader_alpha;
+            PicBox.SizeMode = PictureBoxSizeMode.CenterImage;
+
+            PicBox.Height = ContentPanel.Height;
+            PicBox.Width = ContentPanel.Width;
+            PicBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                   | System.Windows.Forms.AnchorStyles.Left)
+                   | System.Windows.Forms.AnchorStyles.Right)));
+
+            ContentPanel.Controls.Add(PicBox);            
+        }
+
+        private void UnloadLoadingIndicator()
+        {
+            if (InvokeRequired)
+            {
+                Invoke((System.Action)UnloadLoadingIndicator);
+                return;
+            }
+
+            ContentPanel.Controls.Remove(PicBox);
+            PicBox = null;            
+        }
 
         private void AddFrame(DashboardFrame Frame)
         {
@@ -119,6 +161,17 @@ namespace Vcc.Nolvus.Dashboard
 
             ContentPanel.Controls.Add(Frame);
             LoadedFrame = Frame;
+        }
+
+        private void DoLoad(DashboardFrame Frame)
+        {
+            Frame.Height = ContentPanel.Height;
+            Frame.Width = ContentPanel.Width;
+            Frame.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                   | System.Windows.Forms.AnchorStyles.Left)
+                   | System.Windows.Forms.AnchorStyles.Right)));
+
+            AddFrame(Frame);
         }
 
         private void RemoveLoadedFrame()
@@ -156,34 +209,12 @@ namespace Vcc.Nolvus.Dashboard
 
 
             this.TitleBarControl.Title = Value;
-        }
-               
-        private void ShowLoading()
-        {
-            if (InvokeRequired)
-            {
-                Invoke((System.Action)ShowLoading);
-                return;
-            }
-
-            //this.PicBoxLoading.Show();
-        }
-
-        private void HideLoading()
-        {
-            if (InvokeRequired)
-            {
-                Invoke((System.Action)ShowLoading);
-                return;
-            }
-
-            //this.PicBoxLoading.Hide();
-        }
+        }       
 
         #endregion
 
         #region Interface Implementation
-        
+
         public bool IsOlder(string LatestVersion)
         {
             string[] v1List = LatestVersion.Split(new char[] { '.' });
@@ -209,12 +240,8 @@ namespace Vcc.Nolvus.Dashboard
         public string Version
         {
             get
-            {
-                Assembly CurrentAssembly = Assembly.GetEntryAssembly();
-                if (CurrentAssembly == null) CurrentAssembly = Assembly.GetCallingAssembly();
-                System.Version VersionNumber = CurrentAssembly.GetName().Version;
-
-                return string.Format("{0}.{1}.{2}", VersionNumber.Major, VersionNumber.Minor, VersionNumber.Build);
+            {                               
+                return ServiceSingleton.Globals.GetVersion(DashboardExe);              
             }
         }        
         public void LoadAccountImage(string Url)
@@ -350,34 +377,32 @@ namespace Vcc.Nolvus.Dashboard
 
             StatusStripEx.Visible = true;
             StripLblAccountType.Text = Value;
-        }
-        private void DoLoad(DashboardFrame Frame)
-        {
-            Frame.Height = this.ContentPanel.Height;
-            Frame.Width = this.ContentPanel.Width;
-            Frame.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                   | System.Windows.Forms.AnchorStyles.Left)
-                   | System.Windows.Forms.AnchorStyles.Right)));            
-
-            AddFrame(Frame);
-        }
+        }       
         public async Task<T> LoadFrameAsync<T>(FrameParameters Parameters = null) where T : DashboardFrame
         {            
             RemoveLoadedFrame();
 
+            ShowLoadingIndicator();
+
             var Frame = await DashboardFrame.CreateAsync<T>(new object[] { this, Parameters });
+
+            UnloadLoadingIndicator();
 
             DoLoad(Frame);
 
-            OnFrameLoadedAsyncEvent(this, new EventArgs());            
+            OnFrameLoadedAsyncEvent(this, new EventArgs());
 
-            return Frame;
+            return Frame;                        
         }
         public T LoadFrame<T>(FrameParameters Parameters = null) where T : DashboardFrame
         {            
             RemoveLoadedFrame();
 
+            ShowLoadingIndicator();
+
             var Frame = DashboardFrame.Create<T>(new object[] { this, Parameters });
+
+            UnloadLoadingIndicator();
 
             DoLoad(Frame);
 
@@ -387,6 +412,8 @@ namespace Vcc.Nolvus.Dashboard
         }
         public async Task Error(string Title, string Message, string Trace = null, bool Retry = false)
         {
+            UnloadLoadingIndicator();
+
             ServiceSingleton.Dashboard.NoStatus();
             ServiceSingleton.Dashboard.ProgressCompleted();
             ServiceSingleton.Logger.Log("Error Form => " + Message);

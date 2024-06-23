@@ -131,61 +131,96 @@ namespace Vcc.Nolvus.Dashboard.Frames.Installer
             return ServiceSingleton.Globals.GetVideoAdapters().Where(x => x.Contains("NVIDIA") && x.Contains("RTX")).FirstOrDefault() != null;
         }
 
-        protected override void OnLoad()
-        {           
-            var Instance = ServiceSingleton.Instances.WorkingInstance;            
+        protected override async Task OnLoadAsync()
+        {
+            try
+            {                
+                var Instance = ServiceSingleton.Instances.WorkingInstance;
 
-            DrpDwnLstScreenRes.DataSource = ServiceSingleton.Globals.WindowsResolutions;
-            DrpDwnLstScreenRes.SelectedIndex = ResolutionIndex(ServiceSingleton.Globals.WindowsResolutions);
-            DrpDwnLstScreenRes.Enabled = false;
+                DrpDwnLstScreenRes.DataSource = ServiceSingleton.Globals.WindowsResolutions;
+                DrpDwnLstScreenRes.SelectedIndex = ResolutionIndex(ServiceSingleton.Globals.WindowsResolutions);
+                DrpDwnLstScreenRes.Enabled = false;
 
-            this.TglBtnPhysics.ToggleState = ToggleButtonState.Inactive;
+                this.TglBtnPhysics.ToggleState = ToggleButtonState.Inactive;
 
-            if (Instance.Performance.AdvancedPhysics == "TRUE")
-            {
-                this.TglBtnPhysics.ToggleState = ToggleButtonState.Active;
+                if (Instance.Performance.AdvancedPhysics == "TRUE")
+                {
+                    this.TglBtnPhysics.ToggleState = ToggleButtonState.Active;
+                }
+
+                this.TglBtnRayTracing.ToggleState = ToggleButtonState.Inactive;
+
+                if (Instance.Performance.RayTracing == "TRUE")
+                {
+                    this.TglBtnRayTracing.ToggleState = ToggleButtonState.Active;
+                }
+
+                this.TglBtnDownScale.ToggleState = ToggleButtonState.Inactive;
+
+                if (Instance.Performance.DownScaling == "TRUE")
+                {
+                    this.TglBtnDownScale.ToggleState = ToggleButtonState.Active;
+                }
+
+                this.TglBtnFPSStabilizer.ToggleState = ToggleButtonState.Inactive;
+
+                if (Instance.Performance.FPSStabilizer == "TRUE")
+                {
+                    this.TglBtnFPSStabilizer.ToggleState = ToggleButtonState.Active;
+                }
+
+                DrpDwnLstAntiAliasing.DataSource = AntiAliasing;
+
+                LblCPU.Text = await ServiceSingleton.Globals.GetCPUInfo();
+
+                var Ram = await ServiceSingleton.Globals.GetRamCount();
+
+                if ( Ram != "RAM count not found")
+                {
+                    LblRAM.Text = Ram + " GB";
+                }
+                else
+                {
+                    LblRAM.Text = Ram;
+                }                
+
+                var GPU = string.Join(Environment.NewLine, ServiceSingleton.Globals.GetVideoAdapters().ToArray());
+
+                if (!ServiceSingleton.Settings.ForceAA)
+                {
+                    LblGPUs.Text = GPU;
+
+                    if (!IsNvidiaRTX())
+                    {
+                        ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing = "TAA";
+                        DrpDwnLstAntiAliasing.Enabled = false;
+                    }
+                }
+                else
+                {
+                    LblGPUs.Text = GPU + " (CHECK BYPASSED)";
+                }
+
+                DrpDwnLstAntiAliasing.SelectedIndex = AntiAliasingIndex(AntiAliasing);
+
+                DrpDwnLstIni.DataSource = IniSettings;
+
+                DrpDwnLstIni.SelectedIndex = System.Convert.ToInt16(Instance.Performance.IniSettings);
+
+                DrpDwnLstVariant.DataSource = Variants;
+
+                DrpDwnLstVariant.SelectedIndex = VariantIndex(Variants);
+
+                DrpDwnLstLODs.DataSource = LODs;
+
+                DrpDwnLstLODs.SelectedIndex = LODsIndex(LODs);
+
+                ServiceSingleton.Dashboard.Info("Performance Settings");
             }
-
-            this.TglBtnRayTracing.ToggleState = ToggleButtonState.Inactive;
-
-            if (Instance.Performance.RayTracing == "TRUE")
+            catch(Exception ex)
             {
-                this.TglBtnRayTracing.ToggleState = ToggleButtonState.Active;
-            }
-
-            this.TglBtnDownScale.ToggleState = ToggleButtonState.Inactive;
-
-            if (Instance.Performance.DownScaling == "TRUE")
-            {
-                this.TglBtnDownScale.ToggleState = ToggleButtonState.Active;
-            }
-
-            this.TglBtnFPSStabilizer.ToggleState = ToggleButtonState.Inactive;
-
-            if (Instance.Performance.FPSStabilizer == "TRUE")
-            {
-                this.TglBtnFPSStabilizer.ToggleState = ToggleButtonState.Active;
-            }
-
-            DrpDwnLstAntiAliasing.DataSource = AntiAliasing;
-      
-            LblGPUs.Text = "NOT LISTED (CHECK BYPASSED)";
-            
-            DrpDwnLstAntiAliasing.SelectedIndex = AntiAliasingIndex(AntiAliasing);
-
-            DrpDwnLstIni.DataSource = IniSettings;
-
-            DrpDwnLstIni.SelectedIndex = System.Convert.ToInt16(Instance.Performance.IniSettings);
-
-            DrpDwnLstVariant.DataSource = Variants;
-
-            DrpDwnLstVariant.SelectedIndex = VariantIndex(Variants);
-
-            DrpDwnLstLODs.DataSource = LODs;
-
-            DrpDwnLstLODs.SelectedIndex = LODsIndex(LODs);
-
-            ServiceSingleton.Dashboard.Info("Performance Settings");            
+                await ServiceSingleton.Dashboard.Error("Error during performance options loading", ex.Message, ex.StackTrace);
+            }    
         }        
         private void BtnPrevious_Click(object sender, EventArgs e)
         {
@@ -197,9 +232,9 @@ namespace Vcc.Nolvus.Dashboard.Frames.Installer
             var Instance = ServiceSingleton.Instances.WorkingInstance;
             var Performance = Instance.Performance;            
 
-            if (Performance.DownScaling == "TRUE" && (Instance.Settings.Height == Performance.DownHeight || System.Convert.ToInt32(Performance.DownHeight) > System.Convert.ToInt32(Instance.Settings.Height)) && (Instance.Settings.Width == Performance.DownWidth || System.Convert.ToInt32(Performance.DownWidth) > System.Convert.ToInt32(Instance.Settings.Width)))
+            if (Performance.DownScaling == "TRUE" && (Performance.DownScaling == "TRUE" && (Instance.Settings.Height == Performance.DownHeight || System.Convert.ToInt32(Performance.DownHeight) > System.Convert.ToInt32(Instance.Settings.Height)) && (Instance.Settings.Width == Performance.DownWidth || System.Convert.ToInt32(Performance.DownWidth) > System.Convert.ToInt32(Instance.Settings.Width))))
             {
-                NolvusMessageBox.ShowMessage("Invalid Downscaling setting", "If downscaling is enabled, downscaled resolution must be less than the monitor resolution!", MessageBoxType.Error);
+                NolvusMessageBox.ShowMessage("Invalid Downscaling setting", "If downscaling is enabled, the downscaled resolution must be less than the monitor resolution!", MessageBoxType.Error);
             }
             else
             {
@@ -316,21 +351,22 @@ namespace Vcc.Nolvus.Dashboard.Frames.Installer
                 if (ServiceSingleton.Instances.WorkingInstance.Performance.AntiAliasing == "DLAA")
                 {
                     GrpBxDownScaling.Enabled = false;
+                    TglBtnDownScale.ToggleState = ToggleButtonState.Inactive;
                 }
                 else
                 {
-                    GrpBxDownScaling.Enabled = true;
+                    GrpBxDownScaling.Enabled = true;                    
                 }
             }
 
-            this.DisplayHardwareRequirement();
+            DisplayHardwareRequirement();
         }
 
         private void DrpDwnLstLODs_SelectedIndexChanged(object sender, EventArgs e)
         {
             ServiceSingleton.Instances.WorkingInstance.Performance.LODs = DrpDwnLstLODs.SelectedValue.ToString();
 
-            this.DisplayHardwareRequirement();
+            DisplayHardwareRequirement();
         }
 
         private void DisplayHardwareRequirement()

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 using System.Net;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -19,6 +21,8 @@ using Vcc.Nolvus.Services.Lib;
 using Vcc.Nolvus.Services.Logger;
 using Vcc.Nolvus.Services.Game;
 using Vcc.Nolvus.Services.Files;
+using Vcc.Nolvus.Services.Report;
+using Vcc.Nolvus.Services.Checker;
 using Vcc.Nolvus.Instance.Services;
 using Vcc.Nolvus.Package.Services;
 using Vcc.Nolvus.Dashboard.Forms;
@@ -32,31 +36,35 @@ namespace Vcc.Nolvus.Dashboard
         /// </summary>
         [STAThread]
         static void Main()
-        {
+        {            
             ServiceSingleton.RegisterService<ILogService>(new LogService());
             ServiceSingleton.Logger.LineBreak();
             ServiceSingleton.Logger.Log("***Nolvus Dashboard Initialization***");
             ServiceSingleton.Logger.Log("Starting new session : " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString());
             ServiceSingleton.Logger.Log("Architecture : " + (Environment.Is64BitProcess ? "x64" : "x86"));
 
-            
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            var PackageService = new PackageService();
+
             ServiceSingleton.RegisterService<IGlobalsService>(new GlobalsService());
             ServiceSingleton.RegisterService<ISettingsService>(new SettingsService());
             ServiceSingleton.RegisterService<IFolderService>(new FolderService());            
             ServiceSingleton.RegisterService<IInstanceService>(new InstanceService());
             ServiceSingleton.RegisterService<IUpdaterService>(new UpdaterService());
-            ServiceSingleton.RegisterService<IPackageService>(new PackageService());
+            ServiceSingleton.RegisterService<IPackageService>(PackageService);            
             ServiceSingleton.RegisterService<ILibService>(new LibService());
             ServiceSingleton.RegisterService<IGameService>(new GameService());
             ServiceSingleton.RegisterService<IFileService>(new FileService());
+            ServiceSingleton.RegisterService<ISoftwareProvider>(PackageService);
+            ServiceSingleton.RegisterService<IReportService>(new ReportService());
+            ServiceSingleton.RegisterService<ICheckerService>(new CheckerService());            
 
             AppDomain.CurrentDomain.AssemblyResolve += Resolver;
             AppDomain.CurrentDomain.AssemblyLoad += Loader;
             AppDomain.CurrentDomain.UnhandledException += ExceptionHandler;
 
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzM2MTU4QDMxMzgyZTMzMmUzMFBiTkxiV0dEMEhlWnowK3IxVUFsYkdGM2VnR0d6RDVBdGNYOEVFK2VqNVk9");
-
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;            
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzM2MTU4QDMxMzgyZTMzMmUzMFBiTkxiV0dEMEhlWnowK3IxVUFsYkdGM2VnR0d6RDVBdGNYOEVFK2VqNVk9");                       
 
             SfSkinManager.LoadAssembly(typeof(Office2016Theme).Assembly);
             SfSkinManager.LoadAssembly(typeof(Office2019Theme).Assembly);
@@ -87,16 +95,22 @@ namespace Vcc.Nolvus.Dashboard
         {                                                         
             ServicePointManager.DefaultConnectionLimit = 100;
 
-            var settings = new CefSettings();
+            var CefSettings = new CefSettings();
 
-            settings.CachePath = ServiceSingleton.Folders.WebCacheDirectory;
+            CefSettings.CachePath = ServiceSingleton.Folders.WebCacheDirectory;
+            CefSettings.LogFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CefSharpLog.txt");
 
+            LogSeverity LogSeverity;
 
-            settings.BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+            Enum.TryParse<LogSeverity>(ServiceSingleton.Settings.BrowserLogSeverity, out LogSeverity);
+
+            CefSettings.LogSeverity = LogSeverity;
+
+            CefSettings.BrowserSubprocessPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                                                    System.Environment.Is64BitProcess ? "x64" : "x86",
                                                    "CefSharp.BrowserSubprocess.exe");
             
-            Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
+            Cef.Initialize(CefSettings, performDependencyCheck: false, browserProcessHandler: null);
 
             
             Application.Run(new DashboardWindow());            

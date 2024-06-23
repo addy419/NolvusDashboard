@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
-using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Vcc.Nolvus.Core.Interfaces;
+using Vcc.Nolvus.Core.Misc;
 using Vcc.Nolvus.Core.Services;
 using Vcc.Nolvus.Package.Rules;
 
 namespace Vcc.Nolvus.Package.Mods
 {
     public enum IniLevel { IniLow, IniMedium, IniHigh }
-    public class ModOrganizer : Software
+    public class ModOrganizer : Software, IModOrganizer
     {
         #region Constants
 
@@ -2312,9 +2313,14 @@ ccafdsse001-dwesanctuary.esm";
 
         #endregion
 
-        #region Methods
+        public static string SoftwareId
+        {
+            get { return "Mod Organizer 2"; }
+        }
 
-        private static void CreateModOrganizerIni(string InstallDir, string Profile, string GameDir, string DataDir)
+        #region Methods        
+
+        private void CreateModOrganizerIni(string InstallDir, string Profile, string GameDir, string DataDir)
         {
             var FileName = Path.Combine(InstallDir, "ModOrganizer.ini");
 
@@ -2365,12 +2371,25 @@ ccafdsse001-dwesanctuary.esm";
             return Result;
         }
 
-        public static void AppendToIni(string IniDir, string Section, string Key, string Value)
+        public static bool IsRunning
+        {
+            get
+            {
+                return Process.GetProcessesByName("ModOrganizer").Length != 0;
+            }
+        }
+
+        public static Process Start(string InstallDir)
+        {
+            return Process.Start(Path.Combine(InstallDir, "MO2", "ModOrganizer.exe"));
+        }
+
+        public void AppendToIni(string IniDir, string Section, string Key, string Value)
         {            
             ServiceSingleton.Settings.StoreIniValue(Path.Combine(IniDir, "ModOrganizer.ini"), Section, Key, Value);
         }
 
-        public static void AddExecutable(string IniDir, string Args, string Binary, bool Hide, bool OwnIcon, string Title, bool Toolbar, string WorkingDirectory)
+        public void AddExecutable(string IniDir, string Args, string Binary, bool Hide, bool OwnIcon, string Title, bool Toolbar, string WorkingDirectory)
         {
             string IniFilePath = Path.Combine(IniDir, "ModOrganizer.ini");            
 
@@ -2385,30 +2404,17 @@ ccafdsse001-dwesanctuary.esm";
 
             Size++;
 
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", "size", Size.ToString());
+            AppendToIni(IniDir, "customExecutables", "size", Size.ToString());
 
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", Size + "\\arguments", Args);
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", Size + "\\binary", Binary);
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", Size + "\\hide", Hide.ToString().ToLower());
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", Size + "\\ownicon", OwnIcon.ToString().ToLower());
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", Size + "\\steamAppID", string.Empty);
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", Size + "\\title", Title);
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", Size + "\\toolbar", Toolbar.ToString().ToLower());
-            ModOrganizer.AppendToIni(IniDir, "customExecutables", Size + "\\workingDirectory", WorkingDirectory);
-        }       
-
-        public static bool IsRunning
-        {
-            get
-            {
-                return Process.GetProcessesByName("ModOrganizer").Length != 0;
-            }
-        }
-
-        public static System.Diagnostics.Process Start(string InstallDir)
-        {
-            return Process.Start(Path.Combine(InstallDir, "MO2", "ModOrganizer.exe"));
-        }
+            AppendToIni(IniDir, "customExecutables", Size + "\\arguments", Args);
+            AppendToIni(IniDir, "customExecutables", Size + "\\binary", Binary);
+            AppendToIni(IniDir, "customExecutables", Size + "\\hide", Hide.ToString().ToLower());
+            AppendToIni(IniDir, "customExecutables", Size + "\\ownicon", OwnIcon.ToString().ToLower());
+            AppendToIni(IniDir, "customExecutables", Size + "\\steamAppID", string.Empty);
+            AppendToIni(IniDir, "customExecutables", Size + "\\title", Title);
+            AppendToIni(IniDir, "customExecutables", Size + "\\toolbar", Toolbar.ToString().ToLower());
+            AppendToIni(IniDir, "customExecutables", Size + "\\workingDirectory", WorkingDirectory);
+        }              
 
         private void CreateBaseDirectories()
         {
@@ -2456,21 +2462,21 @@ ccafdsse001-dwesanctuary.esm";
 
             var MO2Folder = Path.Combine(Instance.InstallDir, "MO2");
 
-            ModOrganizer.AddExecutable(MO2Folder, @"\""" + Instance.StockGame.Replace(@"\", @"\\") + @"\""", Path.Combine(Instance.InstallDir, "MO2", "NolvusLauncher.exe").Replace(@"\", @"/"), false, true, "Nolvus", true, Path.Combine(Instance.InstallDir, "MO2").Replace(@"\", @"/"));
-            ModOrganizer.AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "skse64_loader.exe").Replace(@"\", @"/"), true, true, "SKSE", false, Instance.StockGame.Replace(@"\", @"/"));
-            ModOrganizer.AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "SkyrimSE.exe").Replace(@"\", @"/"), true, true, "Skyrim Special Edition", false, Instance.StockGame.Replace(@"\", @"/"));
-            ModOrganizer.AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "SkyrimSELauncher.exe").Replace(@"\", @"/"), true, true, "Skyrim Special Edition Launcher", false, Instance.StockGame.Replace(@"\", @"/"));
-            ModOrganizer.AddExecutable(MO2Folder, @"\""" + Instance.StockGame.Replace(@"\", @"\\") + "\\\\Data\\\"", Path.Combine(Instance.InstallDir, "MO2", "explorer++", "Explorer++.exe").Replace(@"\", @"/"), true, true, "Explore Virtual Folder", false, Path.Combine(Instance.InstallDir, "MO2", "explorer++").Replace(@"\", @"/"));
-            ModOrganizer.AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine", "Nemesis_Engine", "Nemesis Unlimited Behavior Engine.exe").Replace(@"\", @"/"), false, true, "Nemesis Unlimited Behavior Engine", true, Path.Combine(Instance.InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine", "Nemesis_Engine").Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, @"\""" + Instance.StockGame.Replace(@"\", @"\\") + @"\""", Path.Combine(Instance.InstallDir, "MO2", "NolvusLauncher.exe").Replace(@"\", @"/"), false, true, "Nolvus", true, Path.Combine(Instance.InstallDir, "MO2").Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "skse64_loader.exe").Replace(@"\", @"/"), true, true, "SKSE", false, Instance.StockGame.Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "SkyrimSE.exe").Replace(@"\", @"/"), true, true, "Skyrim Special Edition", false, Instance.StockGame.Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.StockGame, "SkyrimSELauncher.exe").Replace(@"\", @"/"), true, true, "Skyrim Special Edition Launcher", false, Instance.StockGame.Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, @"\""" + Instance.StockGame.Replace(@"\", @"\\") + "\\\\Data\\\"", Path.Combine(Instance.InstallDir, "MO2", "explorer++", "Explorer++.exe").Replace(@"\", @"/"), true, true, "Explore Virtual Folder", false, Path.Combine(Instance.InstallDir, "MO2", "explorer++").Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine", "Nemesis_Engine", "Nemesis Unlimited Behavior Engine.exe").Replace(@"\", @"/"), false, true, "Nemesis Unlimited Behavior Engine", true, Path.Combine(Instance.InstallDir, "MODS", "mods", "Nemesis Unlimited Behavior Engine", "Nemesis_Engine").Replace(@"\", @"/"));
 
             string Args = "-D:\\\"" + Path.Combine(Instance.StockGame, "Data").Replace("\\", "\\\\") + "\\\"" + " -c:\\\"" + Instance.InstallDir.Replace("\\", "\\\\") + "\\\\TOOLS\\\\SSE Edit\\\\Cache\\\\\\\"";
-            ModOrganizer.AddExecutable(Instance.InstallDir + "\\MO2", Args, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit", "SSEEdit.exe").Replace(@"\", @"/"), false, true, "xEdit", true, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit").Replace(@"\", @"/"));
+            AddExecutable(Instance.InstallDir + "\\MO2", Args, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit", "SSEEdit.exe").Replace(@"\", @"/"), false, true, "xEdit", true, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit").Replace(@"\", @"/"));
 
             string ArgsAutoClean = "-DontCache -D:\\\"" + Path.Combine(Instance.StockGame, "Data").Replace("\\", "\\\\") + "\\\"";
-            ModOrganizer.AddExecutable(Instance.InstallDir + "\\MO2", ArgsAutoClean, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit", "SSEEditQuickAutoClean.exe").Replace(@"\", @"/"), false, true, "xEdit Cleaning", false, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit").Replace(@"\", @"/"));
+            AddExecutable(Instance.InstallDir + "\\MO2", ArgsAutoClean, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit", "SSEEditQuickAutoClean.exe").Replace(@"\", @"/"), false, true, "xEdit Cleaning", false, Path.Combine(Instance.InstallDir + "\\TOOLS\\SSE Edit").Replace(@"\", @"/"));
 
 
-            ModOrganizer.AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.InstallDir, "MODS", "mods", "BodySlide and Outfit Studio", "CalienteTools", "BodySlide", "BodySlide x64.exe").Replace(@"\", @"/"), false, true, "Body Slide", true, Path.Combine(Instance.InstallDir, "MODS", "mods", "BodySlide and Outfit Studio", "CalienteTools", "BodySlide").Replace(@"\", @"/"));
+            AddExecutable(MO2Folder, string.Empty, Path.Combine(Instance.InstallDir, "MODS", "mods", "BodySlide and Outfit Studio", "CalienteTools", "BodySlide", "BodySlide x64.exe").Replace(@"\", @"/"), false, true, "Body Slide", true, Path.Combine(Instance.InstallDir, "MODS", "mods", "BodySlide and Outfit Studio", "CalienteTools", "BodySlide").Replace(@"\", @"/"));
 
         }
 
@@ -2519,7 +2525,106 @@ ccafdsse001-dwesanctuary.esm";
             await Tsk;
         }
 
-        #endregion
+        private string GetModListFile()
+        {
+            return Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MODS", "profiles", ServiceSingleton.Instances.WorkingInstance.Name, "modlist.txt");
+        }
+
+        private async Task<List<ModObject>> DoGetModsMetaData(string Profile, Action<string, int> Progress = null)
+        {
+            return await Task.Run(() =>
+            {
+                var Instance = ServiceSingleton.Instances.WorkingInstance;                
+                var Mods = File.ReadAllLines(Path.Combine(Instance.InstallDir, "MODS", "profiles", Profile, "modlist.txt")).ToList();
+                                
+                Mods.RemoveAt(0);
+                Mods.Reverse();
+
+                var Category = string.Empty;
+                var Counter = 0;
+                var Result = new List<ModObject>();
+
+                foreach (var Line in Mods)
+                {
+                    var Selected = Line.Substring(0, 1);
+                    var Mod = Line.Substring(1);
+
+                    if (Mod.Contains("_separator"))
+                    {
+                        Category = Mod.Replace("_separator", string.Empty);
+                    }
+                    else
+                    {
+                        var ModObject = new ModObject
+                        {
+                            Selected = Selected == "+" || Selected == "*",
+                            Priority = Result.Count,
+                            Name = Mod,
+                            Category = Category,
+                            Version = "NA",
+                            StatusText = "OK"
+                        };
+
+                        var MetaIniFile = Path.Combine(Instance.InstallDir, "MODS", "mods", Mod, "meta.ini");
+
+                        if (File.Exists(MetaIniFile))
+                        {
+                            try
+                            {
+                                ModObject.Version = ServiceSingleton.Settings.GetIniValue(MetaIniFile, "General", "version");
+
+                                if (ModObject.Version == null)
+                                {
+                                    ModObject.Version = "NA";
+                                    ModObject.Status = ModObjectStatus.MetaIniError;
+                                    ModObject.StatusText = string.Format("Unable to parse meta.ini data for {0}", Mod);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                ModObject.Version = "NA";
+                                ModObject.Status = ModObjectStatus.MetaIniError;
+                                ModObject.StatusText = string.Format("Unable to parse meta.ini data for {0} - {1}", Mod, ex.Message);
+                            }
+                        }
+                        else
+                        {
+                            if (Directory.Exists(Path.Combine(Instance.InstallDir, "MODS", "mods", Mod)))
+                            {
+                                ModObject.Version = "NA";
+                                ModObject.Status = ModObjectStatus.InstalledIniMissing;
+                                ModObject.StatusText = "Installed but meta.ini file is missing";
+                            }                           
+                        }                       
+
+                        Result.Add(ModObject);
+                    }
+
+                    Progress("Loading Mod Organizer data file", System.Convert.ToInt16(Math.Round(((double)++Counter / Mods.Count * 100))));
+                }
+
+                return Result;
+            });
+        }
+
+        public List<string> GetProfiles()
+        {
+            return new DirectoryInfo(Path.Combine(ServiceSingleton.Instances.WorkingInstance.InstallDir, "MODS", "profiles")).GetDirectories().Where(x => x.GetFiles().Any(y => y.Name == "modlist.txt")).Select(d => {
+                return d.Name;
+            }).ToList();                                        
+        }
+
+        public async Task<List<ModObject>> GetModsMetaData(Action<string, int> Progress = null)
+        {
+            return await DoGetModsMetaData(ServiceSingleton.Instances.WorkingInstance.Name, Progress);
+        }
+
+        public async Task<List<ModObject>> GetModsMetaData(string Profile, Action<string, int> Progress = null)
+        {
+            return await DoGetModsMetaData(Profile, Progress);
+        }
+
+        #endregion                       
     }
 }
 

@@ -19,6 +19,7 @@ using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 using Vcc.Nolvus.Core.Interfaces;
 using Vcc.Nolvus.Core.Enums;
+using Vcc.Nolvus.Core.Misc;
 using Vcc.Nolvus.Core.Frames;
 using Vcc.Nolvus.Core.Services;
 using Vcc.Nolvus.Package.Mods;
@@ -438,9 +439,9 @@ namespace Vcc.Nolvus.Dashboard.Frames.Instance
             }
         }        
 
-        private async void BtnBack_Click(object sender, EventArgs e)
+        private void BtnBack_Click(object sender, EventArgs e)
         {
-            await ServiceSingleton.Dashboard.LoadFrameAsync<InstanceDetailFrame>();
+            ServiceSingleton.Dashboard.LoadFrame<InstanceDetailFrame>();
         }
 
         private void ApplyResolution()

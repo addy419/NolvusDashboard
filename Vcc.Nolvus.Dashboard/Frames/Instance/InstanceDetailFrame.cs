@@ -20,6 +20,7 @@ using Syncfusion.WinForms.DataGrid.Enums;
 using Vcc.Nolvus.Core.Interfaces;
 using Vcc.Nolvus.Core.Enums;
 using Vcc.Nolvus.Core.Services;
+using Vcc.Nolvus.Core.Misc;
 using Vcc.Nolvus.Core.Frames;
 using Vcc.Nolvus.Dashboard.Core;
 using Vcc.Nolvus.Dashboard.Forms;
@@ -31,6 +32,9 @@ namespace Vcc.Nolvus.Dashboard.Frames.Instance
 {
     public partial class InstanceDetailFrame : DashboardFrame
     {
+        private ModObjectList ModListStatus = new ModObjectList();
+        private string _CurrentProfile;
+
         public InstanceDetailFrame()
         {
             InitializeComponent();
@@ -63,21 +67,24 @@ namespace Vcc.Nolvus.Dashboard.Frames.Instance
 
         }
 
-        protected override async Task OnLoadedAsync()
+        private string SelectedProfile
         {
-            try
+            get
             {
-                INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
-
-                LblHeader.Text = Instance.Name + " v" + Instance.Version;
-                ServiceSingleton.Dashboard.Info("Instance mods for " + Instance.Name + " v" + Instance.Version);
-
-                LoadGrids(await LoadMods());
+                return DrpDwnLstProfiles.SelectedValue.ToString();
             }
-            catch(Exception ex)
-            {
-                await ServiceSingleton.Dashboard.Error("Error during instance detail loading", ex.Message);
-            }
+        }
+
+        protected override void OnLoaded()
+        {            
+            INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
+
+            LblHeader.Text = Instance.Name + " v" + Instance.Version;
+            ServiceSingleton.Dashboard.Info("Instance mods for " + Instance.Name + " v" + Instance.Version);
+
+            DrpDwnLstProfiles.Visible = false;
+            DrpDwnLstProfiles.DataSource = ServiceSingleton.Packages.ModOrganizer2.GetProfiles();
+            DrpDwnLstProfiles.SelectedIndex = 0;                
         }
 
         private void PnlHeader_Paint(object sender, PaintEventArgs e)
@@ -89,18 +96,18 @@ namespace Vcc.Nolvus.Dashboard.Frames.Instance
               Color.White, 3, ButtonBorderStyle.Solid);// bottom
         }
 
-        private void LoadGrids(List<GridModObject> Mods)
+        private void LoadGrids(ModObjectList Mods)
         {
             if (InvokeRequired)
             {
-                Invoke((System.Action<List<GridModObject>>)LoadGrids, Mods);
+                Invoke((System.Action<ModObjectList>)LoadGrids, Mods);
                 return;
             }
 
-            ModsGrid.SourceType = typeof(GridModObject);
-            ModsGrid.DataSource = Mods;
+            ModsGrid.SourceType = typeof(ModObject);
+            ModsGrid.DataSource = Mods.List;
 
-            ModsGrid.ExpandAllGroup();
+            ModsGrid.ExpandAllGroup();                              
         }
 
         private void ShowLoading()
@@ -137,121 +144,42 @@ namespace Vcc.Nolvus.Dashboard.Frames.Instance
             this.BtnPlay.Enabled = true;
         }       
 
-        public async Task<List<GridModObject>> LoadMods()
+        public async Task<ModObjectList> LoadModStatus()
         {
-            return await Task.Run(() =>
+            return await Task.Run(async() =>
             {
                 try
                 {
                     try
-                    {
+                    {                        
                         ShowLoading();
+
                         ServiceSingleton.Dashboard.Status("Loading mods...");
-                        INolvusInstance Instance = ServiceSingleton.Instances.WorkingInstance;
 
-                        var InstallList = ServiceSingleton.Packages.GetInstallList();
-
-                        var ModListFile = Path.Combine(Instance.InstallDir, "MODS", "profiles", Instance.Name, "modlist.txt");
-
-                        List<string> Mods = System.IO.File.ReadAllLines(ModListFile).ToList();
-
-                        Mods.Reverse();
-
-                        Mods.RemoveAt(Mods.Count - 1);
-
-                        List<GridModObject> ModList = new List<GridModObject>();
-                        var Category = string.Empty;
-                        var Counter = 0;
-
-                        foreach (var Mod in Mods)
-                        {
-                            #region Mods
-
-                            var ModLine = Mod.Substring(1, Mod.Length - 1);
-
-                            if (ModLine.Contains("_separator"))
+                        ModListStatus = await ServiceSingleton.CheckerService.CheckModList(                            
+                            await ServiceSingleton.SoftwareProvider.ModOrganizer2.GetModsMetaData(SelectedProfile, (s, p) =>
                             {
-                                Category = ModLine.Replace("_separator", string.Empty);
+                                ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                                ServiceSingleton.Dashboard.Progress(p);
+                            }),
+                            await ServiceSingleton.Packages.GetModsMetaData((s, p) =>
+                            {
+                                ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                                ServiceSingleton.Dashboard.Progress(p);
+                            }),
+                            (s) => 
+                            {
+                                ServiceSingleton.Dashboard.Status(s);
                             }
-                            else
-                            {
-                                GridModObject GridModObject = new GridModObject();
+                        );
 
-                                GridModObject.Priority = ModList.Count + 1;
-                                GridModObject.Name = ModLine;
-                                GridModObject.Category = Category;
+                        ModListStatus.Profile = SelectedProfile;
 
-                                try
-                                {
-                                    IMOElement MOElement = InstallList.Where(x => x.Name == ModLine).FirstOrDefault();
-
-                                    GridModObject.Status = GridModObjectStatus.OK;
-                                    GridModObject.StatusText = "OK";
-
-                                    if (MOElement != null)
-                                    {
-                                        var MetaIniFile = Path.Combine(Instance.InstallDir, "MODS", "mods", ModLine, "meta.ini");
-
-                                        if (File.Exists(MetaIniFile))
-                                        {
-                                            GridModObject.Version = ServiceSingleton.Settings.GetIniValue(Path.Combine(Instance.InstallDir, "MODS", "mods", ModLine, "meta.ini"), "General", "version");
-
-                                            if (GridModObject.Version != MOElement.Version)
-                                            {
-                                                GridModObject.Status = GridModObjectStatus.VersionMisMatch;
-                                                GridModObject.StatusText = string.Format("Version mismatch expected v{0}", MOElement.Version);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (Directory.Exists(Path.Combine(Instance.InstallDir, "MODS", "mods", ModLine)))
-                                            {
-                                                GridModObject.Version = "NA";
-                                                GridModObject.Status = GridModObjectStatus.InstalledIniMissing;
-                                                GridModObject.StatusText = "Installed but meta.ini file is missing";
-                                            }
-                                            else
-                                            {
-                                                GridModObject.Version = "NA";
-                                                GridModObject.Status = GridModObjectStatus.NotInstalled;
-                                                GridModObject.StatusText = "Not installed";
-                                            }                                            
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (ServiceSingleton.Packages.GameBaseModsList.Where(x => x.Contains(ModLine)).ToList().Count == 0)
-                                        {
-                                            GridModObject.Status = GridModObjectStatus.CustomInstalled;
-                                            GridModObject.StatusText = "Not from the list";
-                                        }
-                                        else
-                                        {
-                                            GridModObject.Version = "NA";
-                                        }
-                                    }
-                                    
-                                }
-                                catch (Exception ex)
-                                {
-                                    GridModObject.Status = GridModObjectStatus.Error;
-                                    GridModObject.StatusText = ex.Message;
-                                }
-
-                                    ModList.Add(GridModObject);
-
-                             }                            
-
-                                ServiceSingleton.Dashboard.Progress(System.Convert.ToInt16(Math.Round(((double)++Counter / Mods.Count * 100))));
-
-                                #endregion
-                        }
-
-                        return ModList;
+                        return ModListStatus;
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
+                        throw ex;                        
                     }
                 }
                 finally
@@ -331,11 +259,11 @@ namespace Vcc.Nolvus.Dashboard.Frames.Instance
         {
             if (e.Column.MappingName == "StatusText")
             {               
-                if ((e.DataRow.RowData as GridModObject).Status == GridModObjectStatus.OK)
+                if ((e.DataRow.RowData as ModObject).Status == ModObjectStatus.OK)
                 {
                     e.Style.TextColor = Color.LimeGreen;
                 }
-                else if ((e.DataRow.RowData as GridModObject).Status == GridModObjectStatus.VersionMisMatch || (e.DataRow.RowData as GridModObject).Status == GridModObjectStatus.InstalledIniMissing)
+                else if ((e.DataRow.RowData as ModObject).Status == ModObjectStatus.VersionMisMatch || (e.DataRow.RowData as ModObject).Status == ModObjectStatus.InstalledIniMissing)
                 {
                     e.Style.TextColor = Color.Orange;
                 }
@@ -379,6 +307,125 @@ namespace Vcc.Nolvus.Dashboard.Frames.Instance
         private async void BtnLoadOrder_Click(object sender, EventArgs e)
         {
             await ServiceSingleton.Dashboard.LoadFrameAsync<LoadOrderFrame>();
+        }
+
+        private void BtnReport_Click(object sender, EventArgs e)
+        {
+            popupMenu1.Show(BtnReport, new Point(0, BtnReport.Height));                        
+        }
+
+        private async void BrItmClipboardReport_Click(object sender, EventArgs e)
+        {
+            ShowLoading();
+
+            try
+            {
+                try
+                {
+                    Clipboard.SetText(await ServiceSingleton.Report.GenerateReportToClipBoard(ModListStatus, (s,p)=> {
+                        ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                        ServiceSingleton.Dashboard.Progress(p);
+                    }));
+
+                    HideLoading();
+                    ServiceSingleton.Dashboard.NoStatus();
+                    ServiceSingleton.Dashboard.ProgressCompleted();
+
+                    NolvusMessageBox.ShowMessage("Information", "Configuration has been copied to the clipboard", MessageBoxType.Info);                                
+                }
+                catch (Exception ex)
+                {
+                    HideLoading();
+                    ServiceSingleton.Dashboard.NoStatus();
+                    ServiceSingleton.Dashboard.ProgressCompleted();
+                    NolvusMessageBox.ShowMessage("Error during report generation", ex.Message, MessageBoxType.Error);
+                }
+            }
+            finally
+            {                                
+            }
+        }
+
+        private async void BrItmPDFReport_Click(object sender, EventArgs e)
+        {
+            ShowLoading();
+
+            try
+            {
+                try
+                {                                   
+                    await ServiceSingleton.Report.GenerateReportToPdf(ModListStatus, Properties.Resources.background_nolvus, (s, p) =>
+                    {
+                        ServiceSingleton.Dashboard.Status(string.Format("{0} ({1}%)", s, p));
+                        ServiceSingleton.Dashboard.Progress(p);
+                    });
+
+                    HideLoading();
+                    ServiceSingleton.Dashboard.NoStatus();
+                    ServiceSingleton.Dashboard.ProgressCompleted();
+
+                    NolvusMessageBox.ShowMessage("Information", string.Format("PDF report has been generated in {0}", ServiceSingleton.Folders.ReportDirectory), MessageBoxType.Info);
+
+                    Process.Start(ServiceSingleton.Folders.ReportDirectory);
+                }
+                catch (Exception ex)
+                {
+                    HideLoading();
+                    ServiceSingleton.Dashboard.NoStatus();
+                    ServiceSingleton.Dashboard.ProgressCompleted();
+                    NolvusMessageBox.ShowMessage("Error during report generation", ex.Message, MessageBoxType.Error);
+                }
+            }
+            finally
+            {                                
+            }
+        }
+
+        private async void DrpDwnLstProfiles_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_CurrentProfile != SelectedProfile)
+                {
+                    _CurrentProfile = SelectedProfile;
+
+                    LoadGrids(await LoadModStatus());
+
+                    if (ModListStatus.HasMods)
+                    {
+                        if (ModListStatus.AddedModsCount > 0 || ModListStatus.RemovedModsCount > 0 || ModListStatus.IniParsingErrorCount > 0)
+                        {
+                            PnlHeader.BackColor = Color.FromArgb(255, 0, 0);
+                            LblHeader.Text += " - Errors Detected";
+                        }
+                        else if (ModListStatus.VersionMismatchCount > 0 || ModListStatus.InstalledIniMissingCount > 0)
+                        {
+                            PnlHeader.BackColor = Color.FromArgb(255, 128, 0);
+                            LblHeader.Text += " - Warning Detected";
+                        }
+                    }
+
+                    DrpDwnLstProfiles.Visible = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await ServiceSingleton.Dashboard.Error("Error during instance detail loading", ex.Message);
+            }   
+        }
+
+        private void ModsGrid_CellDoubleClick(object sender, Syncfusion.WinForms.DataGrid.Events.CellClickEventArgs e)
+        {
+            var Mod = e.DataRow.RowData as ModObject;
+
+            var Info = string.Format("Mod : {0}", Mod.Name, Mod.Version);
+
+            Info += Environment.NewLine;
+            Info += string.Format("Version : {0}", Mod.Version);
+            Info += Environment.NewLine;
+            Info += string.Format("Status : {0}", Mod.StatusText);
+
+            NolvusMessageBox.ShowMessage("Mod information", Info, MessageBoxType.Info);
         }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Management;
+using System.IO;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Vcc.Nolvus.Core.Interfaces;
 using Vcc.Nolvus.Core.Services;
@@ -63,8 +66,8 @@ namespace Vcc.Nolvus.Services.Globals
         public const string NolvusApi = "https://www.nolvus.net/rest/";
         public const string NexusSection = "Nexus";
         public const string ApiKey = "ApiKey";
-        public const string UserAgent = "UserAgent";        
-                
+        public const string UserAgent = "UserAgent";
+
 
         public string ApiVersion
         {
@@ -133,9 +136,8 @@ namespace Vcc.Nolvus.Services.Globals
                     }
                 }
                 catch
-                {
-                    ServiceSingleton.Settings.StoreIniValue(NolvusSection, UserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36 Edge/18.19582");
-                    return ServiceSingleton.Settings.GetIniValue(NolvusSection, UserAgent);
+                {                    
+                    return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36 Edge/18.19582";
                 }
             }
         }
@@ -161,30 +163,95 @@ namespace Vcc.Nolvus.Services.Globals
 
                 return Result;
             }
-           
+
         }
 
         public List<string> GetVideoAdapters()
-        {            
-            ManagementObjectCollection GPUs = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController").Get();
+        {
+            try
+            {                
+                ManagementObjectCollection GPUs = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController").Get();
 
-            var Result = new List<string>();            
+                var Result = new List<string>();
 
-            foreach (ManagementObject GPU in GPUs)
-            {
-                //PropertyData CurrentBitsPerPixel = GPU.Properties["CurrentBitsPerPixel"];
-                PropertyData MinRefreshRate = GPU.Properties["MinRefreshRate"];
-                PropertyData Description = GPU.Properties["Description"];
-
-                //if (CurrentBitsPerPixel != null && Description != null)
-                if (MinRefreshRate != null && Description != null)
+                foreach (ManagementObject GPU in GPUs)
                 {
-                    //if (CurrentBitsPerPixel.Value != null) Result.Add(Description.Value.ToString().ToUpper());
-                    if (MinRefreshRate.Value != null) Result.Add(Description.Value.ToString().ToUpper());
-                }                              
-            }
+                    PropertyData MinRefreshRate = GPU.Properties["MinRefreshRate"];
+                    PropertyData Description = GPU.Properties["Description"];
 
-            return Result;
+                    if (MinRefreshRate != null && Description != null)
+                    {
+                        if (MinRefreshRate.Value != null) Result.Add(Description.Value.ToString().ToUpper());
+                    }
+                }
+
+                return Result;
+            }
+            catch
+            {
+                var List = new List<string>();
+
+                List.Add("GPU info not found");
+
+                return List;
+            }            
+        }
+
+        public async Task<string> GetCPUInfo()
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {                    
+                    string Result = string.Empty;
+
+                    using (ManagementObjectSearcher Win32Proc = new ManagementObjectSearcher("select * from Win32_Processor"))
+                    {
+                        foreach (ManagementObject Obj in Win32Proc.Get())
+                        {
+                            Result = Obj["Name"].ToString();
+                            break;
+                        }
+                    };
+
+                    return Result;
+                }
+                catch
+                {
+                    return "CPU info not found";
+                }
+            });                     
+        }
+
+        public async Task<string> GetRamCount()
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {                    
+                    int Result = 0;
+
+                    using (ManagementObjectSearcher Win32Proc = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem"))
+                    {
+                        foreach (ManagementObject Obj in Win32Proc.Get())
+                        {
+                            Result = System.Convert.ToInt32(Math.Ceiling(System.Convert.ToDouble(Obj["TotalVisibleMemorySize"]) / 1024 / 1024));
+                        }
+                    }
+
+                    return Result.ToString();
+                }
+                catch
+                {
+                    return "RAM count not found";
+                }
+            });        
+        }
+
+        public string GetVersion(string FilePath)
+        {
+            string v = FileVersionInfo.GetVersionInfo(FilePath).ProductVersion;
+            return v.Substring(0, v.LastIndexOf('.'));
         }
     }
-}
+}        
