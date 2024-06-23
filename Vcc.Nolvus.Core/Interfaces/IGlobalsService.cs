@@ -17,5 +17,8 @@ namespace Vcc.Nolvus.Core.Interfaces
         string NolvusUserAgent { get; }
         List<string> WindowsResolutions { get; }
         List<string> GetVideoAdapters();
+        Task<string> GetCPUInfo();
+        Task<string> GetRamCount();
+        string GetVersion(string FilePath);
     }
 }

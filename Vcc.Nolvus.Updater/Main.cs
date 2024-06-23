@@ -11,8 +11,11 @@ using Syncfusion.Windows.Forms;
 using Vcc.Nolvus.Components.Controls;
 using Vcc.Nolvus.Api.Installer.Services;
 using Vcc.Nolvus.Core;
+using Vcc.Nolvus.Core.Interfaces;
 using Vcc.Nolvus.Core.Events;
+using Vcc.Nolvus.Core.Services;
 using Vcc.Nolvus.Services.Files;
+using Vcc.Nolvus.Services.Globals;
 
 namespace Vcc.Nolvus.Updater
 {    
@@ -62,6 +65,22 @@ namespace Vcc.Nolvus.Updater
             }
         }
 
+        private string WindowsProgramFilesX86Folder
+        {
+            get
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            }
+        }
+
+        private string WindowsMyDocumentFolder
+        {
+            get
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+        }
+
         private string BaseFolder
         {
             get
@@ -72,9 +91,7 @@ namespace Vcc.Nolvus.Updater
 
         private string GetDashboardVersion()
         {
-            string Version = FileVersionInfo.GetVersionInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashBoard.exe")).ProductVersion;
-
-            return Version.Substring(0, Version.LastIndexOf('.'));
+            return ServiceSingleton.Globals.GetVersion(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "NolvusDashBoard.exe"));            
         }
 
         private bool IsNewerVersion(string v1, string v2)
@@ -217,6 +234,8 @@ namespace Vcc.Nolvus.Updater
         public Main()
         {
             InitializeComponent();
+            
+            ServiceSingleton.RegisterService<IGlobalsService>(new GlobalsService());
 
             SkinManager.SetVisualStyle(this, "Office2016Black");
             this.Style.TitleBar.MaximizeButtonHoverBackColor = Color.DarkOrange;
@@ -231,8 +250,7 @@ namespace Vcc.Nolvus.Updater
             this.Style.TitleBar.BackColor = Color.FromArgb(54, 54, 54);
             this.Style.TitleBar.IconBackColor = Color.FromArgb(54, 54, 54);
             this.Style.TitleBar.Height = 50;
-            this.Style.BackColor = Color.FromArgb(54, 54, 54);
-
+            this.Style.BackColor = Color.FromArgb(54, 54, 54);            
 
             MessageBar = new MessageBar();
             MessageBar.Width = 3000;
@@ -242,24 +260,29 @@ namespace Vcc.Nolvus.Updater
 
             this.LblInfo.Text = "Initializing...";
 
-            if (BaseFolder == WindowsDownloadFolder)
+            if (BaseFolder == WindowsDownloadFolder || BaseFolder.Contains(WindowsDownloadFolder))
             {
-                SetError("Nolvus Dashboard can not be installed inside Windows download folder, please copy the updater.exe into an other folder (like D:\\Nolvus).");
+                SetError("Nolvus Dashboard can not be installed inside Windows download folder, please copy the updater.exe into an other folder");
                 ShowButton(true);
             }
-            else if (BaseFolder == WindowsDesktopFolder)
+            else if (BaseFolder == WindowsDesktopFolder || BaseFolder.Contains(WindowsDesktopFolder))
             {
-                SetError("Nolvus Dashboard can not be installed on your desktop, please copy the updater.exe into an other folder (like D:\\Nolvus).");
+                SetError("Nolvus Dashboard can not be installed on your desktop, please copy the updater.exe into an other folder.");
+                ShowButton(true);
+            }
+            else if (BaseFolder == WindowsProgramFilesX86Folder || BaseFolder.Contains(WindowsProgramFilesX86Folder))
+            {
+                SetError("Nolvus Dashboard can not be installed on your Program Files folder, please copy the updater.exe into an other folder.");
+                ShowButton(true);
+            }
+            else if (BaseFolder == WindowsMyDocumentFolder || BaseFolder.Contains(WindowsMyDocumentFolder))
+            {
+                SetError("Nolvus Dashboard can not be installed on your My Document folder, please copy the updater.exe into an other folder.");
                 ShowButton(true);
             }
             else if (new DirectoryInfo(BaseFolder).Parent == null)
             {
-                SetError("Nolvus Dashboard can not be installed on a root drive, please copy the updater.exe into an other folder (like D:\\Nolvus).");
-                ShowButton(true);
-            }
-            else if (BaseFolder.Length > 10)
-            {
-                SetError("Your Installation path (" + BaseFolder + ") is too long, please copy the updater.exe into a shorter path like (D:\\Nolvus). Your installation path will be automatically the path you are starting this program from.");
+                SetError("Nolvus Dashboard can not be installed on a root drive, please copy the updater.exe into an other folder.");
                 ShowButton(true);
             }
             else

@@ -30,7 +30,7 @@ namespace Vcc.Nolvus.Package.Mods
         public ElementAction Action { get; set; }
         public List<ModFile> Files = new List<ModFile>();
         public abstract string ArchiveFolder { get; }
-      
+        public int Index { get; set; }
         private System.Drawing.Image FormatImage()
         {
             float Opacity = 0.30F;
@@ -67,12 +67,13 @@ namespace Vcc.Nolvus.Package.Mods
             {
                 if (_p == null)
                 {
-                    _p = new ModProgress();
-
-                    _p.Name = Name + " by " + Author + " (v " + Version + ")";
-                    _p.Status = "Initializing";
-                    _p.Mbs = 0;
-                    _p.Image = FormatImage();
+                    _p = new ModProgress() {
+                        Name = Name + " by " + Author + " (v " + Version + ")",
+                        Status = "Initializing",
+                        Mbs = 0,
+                        Image = FormatImage(),
+                        Index = Index
+                    };                   
                 }
 
                 return _p;
@@ -93,7 +94,7 @@ namespace Vcc.Nolvus.Package.Mods
         {                                                     
         }
 
-        #region Methods
+        #region Methods        
 
         public virtual void Load(XmlNode Node, List<InstallableElement> Elements)
         {
@@ -101,7 +102,8 @@ namespace Vcc.Nolvus.Package.Mods
             Version = Node["Version"].InnerText;
             ImagePath = Node["ImagePath"].InnerText;
             Author = Node["Author"].InnerText;
-            Action = ElementAction.Add;                       
+            Action = ElementAction.Add;
+            Index = Elements.Count;
 
             foreach (XmlNode FileNode in Node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "Files").FirstOrDefault().ChildNodes.Cast<XmlNode>().ToList())
             {
@@ -190,6 +192,10 @@ namespace Vcc.Nolvus.Package.Mods
                 case ModInstallStatus.UnPacking:                    
                     Progress.Status = "Unpacking files...";
                     Progress.PercentDone = Event.UnPackInfo.PercentDone;
+                    break;
+                case ModInstallStatus.Patching:
+                    Progress.Status = "Patching files...";
+                    Progress.PercentDone = Event.PatchingInfo.PercentDone;
                     break;
                 case ModInstallStatus.Archiving:                    
                     Progress.Status = string.Format("Archiving {0}", Event.ArchivingInfo.FileName);

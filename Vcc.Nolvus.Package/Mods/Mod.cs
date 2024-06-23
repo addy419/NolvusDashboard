@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Xml;
 using System.Threading.Tasks;
 using Vcc.Nolvus.Core.Enums;
+using Vcc.Nolvus.Core.Interfaces;
 using Vcc.Nolvus.Core.Services;
 using Vcc.Nolvus.Package.Rules;
 using Vcc.Nolvus.Package.Conditions;
 using Vcc.Nolvus.Package.Patchers;
-using System.Xml;
+using ZetaLongPaths;
 
 namespace Vcc.Nolvus.Package.Mods
 {
-    public class Mod : MOElement
+    public class Mod : MOElement, IMod
     {
         #region Fields
         
         public List<InstallCondition> InstallConditions = new List<InstallCondition>();
-        public Category Category;
+        protected ICategory _Category;
         public Patcher Patcher;
         public List<Rule> Rules = new List<Rule>();
         public List<BsaUnPacking> Bsas = new List<BsaUnPacking>();
@@ -26,6 +28,8 @@ namespace Vcc.Nolvus.Package.Mods
         #endregion
 
         #region Properties              
+
+        public ICategory Category { get; set; }        
 
         public override string MoDirectoryName
         {
@@ -39,7 +43,7 @@ namespace Vcc.Nolvus.Package.Mods
         {
             get
             {
-                return Path.Combine(ServiceSingleton.Instances.WorkingInstance.ArchiveDir, this.Category.Name);
+                return Path.Combine(ServiceSingleton.Instances.WorkingInstance.ArchiveDir, Category.Name);
             }
         }
 
@@ -50,11 +54,11 @@ namespace Vcc.Nolvus.Package.Mods
             Action = ElementAction.None;
         }
 
-        #region Methods
+        #region Methods        
 
         public override void Load(XmlNode Node, List<InstallableElement> Elements)
         {
-            base.Load(Node, Elements);
+            base.Load(Node, Elements);            
 
             ElementAction ElementAction = (ElementAction)Enum.Parse(typeof(ElementAction), Node["Action"].InnerText);
 
@@ -167,11 +171,11 @@ namespace Vcc.Nolvus.Package.Mods
 
         public override string ToString()
         {
-            return this.Name + " v" + this.Version;
+            return string.Format("{0} v{1}", Name, Version);
         }
         protected override void CreateElementIni()
         {
-            if (this.Display)
+            if (Display)
             {
                 File.WriteAllText(Path.Combine(MoDirectoryFullName, "meta.ini"), string.Format(MetaIni, "0", Version, GetInstallFileName().Replace("\\", "/"), "0"));
             }            
@@ -192,19 +196,19 @@ namespace Vcc.Nolvus.Package.Mods
         {
             if (Display)
             {
-                if (Directory.Exists(MoDirectoryFullName))
+                if (ZlpIOHelper.DirectoryExists(MoDirectoryFullName))
                 {
                     ServiceSingleton.Files.RemoveDirectory(MoDirectoryFullName, true);
                 }
 
-                Directory.CreateDirectory(MoDirectoryFullName);
+                ZlpIOHelper.CreateDirectory(MoDirectoryFullName);
             }
         }
         protected string GetInstallFileName()
         {
             if (ServiceSingleton.Instances.WorkingInstance.Settings.EnableArchiving)
             {
-                return Path.Combine(ArchiveFolder, this.Files.First().FileName);
+                return Path.Combine(ArchiveFolder, Files.First().FileName);
             }
 
             return string.Empty;
@@ -262,7 +266,7 @@ namespace Vcc.Nolvus.Package.Mods
                         ServiceSingleton.Logger.Log(string.Format("Unpacking mod {0}", Name));
                         var Counter = 0;
 
-                        foreach (BsaUnPacking BSA in this.Bsas)
+                        foreach (BsaUnPacking BSA in Bsas)
                         {
                             await BSA.UnPack(Path.Combine(ServiceSingleton.Folders.ExtractDirectory, ExtractSubDir));
 
@@ -293,6 +297,7 @@ namespace Vcc.Nolvus.Package.Mods
                         CopyingProgress(0, 0);
 
                         PrepareDirectrory();
+
                         var Rules = FetchRules();
                         var Counter = 0;                        
 
@@ -330,7 +335,14 @@ namespace Vcc.Nolvus.Package.Mods
                     if (Patcher != null)
                     {
                         ServiceSingleton.Logger.Log(string.Format("Patching mod {0}", Name));
-                        await Patcher.PatchFiles(MoDirectoryFullName, ServiceSingleton.Instances.WorkingInstance.StockGame, DownloadingProgress, ExtractingProgress, PatchingProgress);
+
+                        PatchingProgress(string.Empty, 0, 0);
+
+                        await Patcher.PatchFiles(MoDirectoryFullName, 
+                            ServiceSingleton.Instances.WorkingInstance.StockGame, 
+                            DownloadingProgress, 
+                            ExtractingProgress, 
+                            PatchingProgress);
                     }                                        
                 }
                 catch (Exception ex)
@@ -347,7 +359,7 @@ namespace Vcc.Nolvus.Package.Mods
             {
                 try
                 {
-                    if (Directory.Exists(MoDirectoryFullName))
+                    if (ZlpIOHelper.DirectoryExists(MoDirectoryFullName))
                     {
                         ServiceSingleton.Files.RemoveDirectory(MoDirectoryFullName, true);
                     }
