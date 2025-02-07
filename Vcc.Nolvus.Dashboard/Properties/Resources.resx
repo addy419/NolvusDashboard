@@ -169,6 +169,9 @@
   <data name="Info Card- Sections" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Info Card- Sections.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Nolvus_V6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Nolvus_V6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Journal Main Quest" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Journal Main Quest.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -193,11 +196,20 @@
   <data name="DefaultKeyboardKeys" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DefaultKeyboardKeys.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+ <data name="Check_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Check-01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DefaultKeyboardKeys_V6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DefaultKeyboardKeys_V61.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="compass_l_250" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\compass_l_250.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Tundra-Lush" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tundra-Lush.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Cross_Close_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Cross Close-24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="patreon_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\patreon_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -211,6 +223,9 @@
   <data name="Warning-Message" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Warning-Message.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Check_01_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Check-01-24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="mod_def_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mod-def-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -219,6 +234,9 @@
   </data>
   <data name="Nolvus_V4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Nolvus_V4.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Cross_Close" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Cross Close.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="paterons" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\paterons.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -234,6 +252,18 @@
   </data>
   <data name="Question" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Question.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Cabbage_ENB_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Cabbage_ENB_01.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Cabbaval_ENB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Cabbaval-ENB.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Kauz_ENB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Kauz-ENB.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PiCho_ENB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PiCho-ENB.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DefaultMouseKey" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DefaultMouseKey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
